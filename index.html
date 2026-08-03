@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SpeakPath — Fluent in 3 months</title>
+<link rel="icon" href="data:," />
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.383.0?external=react"
+  }
+}
+</script>
+<script>
+  // --- Storage shim: mimics the window.storage API this app was built with,
+  // backed by the browser's localStorage so progress persists on this device.
+  (function () {
+    const PREFIX = "speakpath-storage:";
+    window.storage = {
+      async get(key) {
+        const raw = localStorage.getItem(PREFIX + key);
+        if (raw === null) return null;
+        return { key, value: raw, shared: false };
+      },
+      async set(key, value) {
+        localStorage.setItem(PREFIX + key, value);
+        return { key, value, shared: false };
+      },
+      async delete(key) {
+        localStorage.removeItem(PREFIX + key);
+        return { key, deleted: true, shared: false };
+      },
+      async list(prefix) {
+        const keys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(PREFIX)) {
+            const bare = k.slice(PREFIX.length);
+            if (!prefix || bare.startsWith(prefix)) keys.push(bare);
+          }
+        }
+        return { keys, prefix, shared: false };
+      },
+    };
+  })();
+</script>
+</head>
+<body class="bg-slate-950">
+  <div id="root"></div>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel" data-presets="react" data-type="module" src="./app.jsx"></script>
+</body>
+</html>
